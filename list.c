@@ -34,15 +34,32 @@ void appendList(List * lista, int value){
         
 }
 
-void removePeople(List * list,int index){
+void removePerson(List * list,int index){
     
     ListItem * tmp = list->start;
-    while(tmp != NULL){
-        if(list->top->value == tmp->value){
-            
+
+    if(list->start != NULL && tmp->value == index){
+        list->start = tmp->next;
+        list->top->before = NULL;
+        free(tmp);
+        return;
+    }
+    
+    
+    while(tmp->value != index && tmp != NULL){
+        if(list->top != NULL && tmp->next == NULL){
+            list->top = tmp->before;
+            list->top->next = NULL;
+            free(tmp);
+            return;
         }
 
+        tmp = tmp->next;
     }
+    tmp->before->next= tmp->next;
+    free(tmp);
+    
+
 }
 int main(){    
     List listOfPeople = (List){.total = 0,.start = NULL,.top=NULL};
@@ -64,7 +81,7 @@ int main(){
     while(numberOfItensToRemove--){
         int RemoveIndex;
         scanf("%d",&RemoveIndex);
-        removePeople(&listOfPeople,RemoveIndex);
+        removePerson(&listOfPeople,RemoveIndex);
     }
     
     ListItem * printItem = listOfPeople.start;
@@ -73,8 +90,8 @@ int main(){
         printf("%d ",printItem->value);
         printItem = printItem->next;
     }
+    printf("\n");
 
-
-     
+     return 0;
     
 }
