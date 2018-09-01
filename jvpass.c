@@ -4,7 +4,6 @@
 
 typedef struct List_Item{
     struct List_Item * next;
-    struct List_Item * before;
     int value;
 }ListItem;
 
@@ -17,10 +16,10 @@ typedef struct  {
 
 void appendList(List * lista, int value){
     
-    ListItem  * new = malloc(sizeof(new));
+    ListItem  * new = (ListItem *)malloc(sizeof(ListItem));
     new->value = value;
     new -> next = NULL;
-    new -> before = lista->top;
+    
 
     if(lista->start == NULL){
         lista -> start = new;
@@ -34,43 +33,44 @@ void appendList(List * lista, int value){
         
 }
 
-void removePerson(List * list,int index){
+void removePerson(List * list,int value){
     
-    ListItem * tmp = list->start;
+    ListItem * index = list->start, *tmp;
 
-    if(list->start != NULL && tmp->value == index){
-        list->start = tmp->next;
-        list->top->before = NULL;
-        free(tmp);
+    if(list->start != NULL && index->value == value){
+        list->start = index->next;
+        free(index);
         return;
     }
     
     
-    while(tmp->value != index && tmp != NULL){
-        if(list->top != NULL && tmp->next == NULL){
-            list->top = tmp->before;
-            list->top->next = NULL;
-            free(tmp);
-            return;
-        }
 
-        tmp = tmp->next;
+    while(index->value != value && index != NULL){
+        
+        tmp = index;
+        index = index->next;
     }
-    tmp->before->next= tmp->next;
-    free(tmp);
+    if(index->next == NULL){
+        list->top = tmp;
+        tmp->next = NULL;
+        free(index);
+        return;
+    }
+    tmp->next = index->next;
     
+        
 
 }
+
 int main(){    
-    List listOfPeople = (List){.total = 0,.start = NULL,.top=NULL};
-    
+    List * listOfPeople = (List *)malloc(sizeof(List));
     int i;
     scanf("%d",&i);
     
     while(i--){
-        int peopleIndex; 
-        scanf("%d",&peopleIndex);
-        appendList(&listOfPeople,peopleIndex);
+        int peoplevalue; 
+        scanf("%d",&peoplevalue);
+        appendList(listOfPeople,peoplevalue);
         
     }
     
@@ -79,19 +79,19 @@ int main(){
     
     
     while(numberOfItensToRemove--){
-        int RemoveIndex;
-        scanf("%d",&RemoveIndex);
-        removePerson(&listOfPeople,RemoveIndex);
+        int Removevalue;
+        scanf("%d",&Removevalue);
+        removePerson(listOfPeople,Removevalue);
     }
     
-    ListItem * printItem = listOfPeople.start;
+    ListItem * printItem = listOfPeople->start;
 
     while(printItem != NULL){
         printf("%d ",printItem->value);
         printItem = printItem->next;
     }
     printf("\n");
-    
+        free(listOfPeople);
      return 0;
     
 }
